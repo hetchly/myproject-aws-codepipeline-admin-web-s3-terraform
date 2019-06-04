@@ -24,7 +24,7 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
         "Effect": "Allow",
         "Principal": {
           "AWS": [
-            "arn:aws:iam::707538076348:role/CalculatorServiceCodePipelineServiceRole"
+            "arn:aws:iam::707538076348:role/myproject-consumer-web-codepipeline-role"
           ]
         },
         "Action": [
@@ -42,7 +42,7 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
         "Effect": "Allow",
         "Principal": {
           "AWS": [
-            "arn:aws:iam::707538076348:role/CalculatorServiceCodePipelineServiceRole"
+            "arn:aws:iam::707538076348:role/myproject-consumer-web-codepipeline-role"
           ]
         },
         "Action": "s3:PutObject",
@@ -64,14 +64,14 @@ $ aws s3api put-bucket-policy \
 
 ### Step 1.5: Create CodePipeline Input File
 ```
-$ vi ~/environment/calculator-frontend/aws-cli/code-pipeline.json
+$ vi ~/environment/myproject-consumer-web/aws-cli/code-pipeline.json
 ```
 
 ```
 {
   "pipeline": {
-      "name": "CalculatorFrontendServiceCICDPipeline",
-      "roleArn": "arn:aws:iam::707538076348:role/CalculatorServiceCodePipelineServiceRole",
+      "name": "myproject-consumer-web-codepipeline",
+      "roleArn": "arn:aws:iam::707538076348:role/myproject-consumer-web-codepipeline-role",
       "stages": [
         {
           "name": "Source",
@@ -89,7 +89,7 @@ $ vi ~/environment/calculator-frontend/aws-cli/code-pipeline.json
               },
               "outputArtifacts": [
                 {
-                  "name": "CalculatorFrontendService-SourceArtifact"
+                  "name": "myproject-consumer-web-source-artifact"
                 }
               ],
               "configuration": {
@@ -113,7 +113,7 @@ $ vi ~/environment/calculator-frontend/aws-cli/code-pipeline.json
               },
               "inputArtifacts": [
                 {
-                  "name": "CalculatorFrontendService-SourceArtifact"
+                  "name": "myproject-consumer-web-source-artifact"
                 }
               ],
               "configuration": {
@@ -142,7 +142,7 @@ $ aws codepipeline create-pipeline \
 
 ### (Optional) Clean up
 ```
-$ aws codepipeline delete-pipeline --name CalculatorFrontendServiceCICDPipeline
+$ aws codepipeline delete-pipeline --name myproject-consumer-web-codepipeline
 $ rm ~/environment/myproject-consumer-web/aws-cli/code-pipeline.json
 $ aws s3api delete-bucket-policy --bucket jrdalino-myproject-consumer-web-artifacts
 $ rm ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
