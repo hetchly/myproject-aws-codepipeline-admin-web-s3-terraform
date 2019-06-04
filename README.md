@@ -1,4 +1,4 @@
-# My Project Frontend CICD CodeCommit & CodePipeline
+# My Project Consumer Web CodePipeline
 
 ## Step 1: Setup CI/CD for Front End
 
