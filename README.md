@@ -1,19 +1,19 @@
-# Frontend CICD CodeCommit & CodePipeline
+# My Project Frontend CICD CodeCommit & CodePipeline
 
-## Step 7: Setup CI/CD for Front End
+## Step 1: Setup CI/CD for Front End
 
-### Step 7.1: Create an S3 Bucket for Pipeline Artifacts
+### Step 1.1: Create an S3 Bucket for Pipeline Artifacts
 ```
-$ aws s3 mb s3://jrdalino-calculator-frontend-artifacts
+$ aws s3 mb s3://jrdalino-myproject-consumer-web-artifacts
 ```
 
-### Step 7.2: Check Codepipeline Roles exists
+### Step 1.2: Check Codepipeline Roles exists
 
-### Step 7.3: Create S3 Bucket Policy File
+### Step 1.3: Create S3 Bucket Policy File
 ```
-$ cd ~/environment/calculator-frontend
+$ cd ~/environment/myproject-consumer-web
 $ mkdir aws-cli
-$ vi ~/environment/calculator-frontend/aws-cli/artifacts-bucket-policy.json
+$ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
 ```
 
 ```
@@ -33,8 +33,8 @@ $ vi ~/environment/calculator-frontend/aws-cli/artifacts-bucket-policy.json
           "s3:GetBucketVersioning"
         ],
         "Resource": [
-          "arn:aws:s3:::jrdalino-calculator-frontend-artifacts/*",
-          "arn:aws:s3:::jrdalino-calculator-frontend-artifacts"
+          "arn:aws:s3:::jrdalino-myproject-consumer-web-artifacts/*",
+          "arn:aws:s3:::jrdalino-myproject-consumer-web-artifacts"
         ]
       },
       {
@@ -47,22 +47,22 @@ $ vi ~/environment/calculator-frontend/aws-cli/artifacts-bucket-policy.json
         },
         "Action": "s3:PutObject",
         "Resource": [
-          "arn:aws:s3:::jrdalino-calculator-frontend-artifacts/*",
-          "arn:aws:s3:::jrdalino-calculator-frontend-artifacts"
+          "arn:aws:s3:::jrdalino-myproject-consumer-web-artifacts/*",
+          "arn:aws:s3:::jrdalino-myproject-consumer-web-artifacts"
         ]
       }
     ]
 }
 ```
 
-### Step 7.4: Grant S3 Bucket access to your CI/CD Pipeline
+### Step 1.4: Grant S3 Bucket access to your CI/CD Pipeline
 ```
 $ aws s3api put-bucket-policy \
---bucket jrdalino-calculator-frontend-artifacts \
---policy file://~/environment/calculator-frontend/aws-cli/artifacts-bucket-policy.json
+--bucket jrdalino-myproject-consumer-web-artifacts \
+--policy file://~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
 ```
 
-### Step 7.5: Create CodePipeline Input File
+### Step 1.5: Create CodePipeline Input File
 ```
 $ vi ~/environment/calculator-frontend/aws-cli/code-pipeline.json
 ```
@@ -94,7 +94,7 @@ $ vi ~/environment/calculator-frontend/aws-cli/code-pipeline.json
               ],
               "configuration": {
                 "BranchName": "master",
-                "RepositoryName": "calculator-frontend"
+                "RepositoryName": "myproject-consumer-web"
               },
               "runOrder": 1
             }
@@ -118,7 +118,7 @@ $ vi ~/environment/calculator-frontend/aws-cli/code-pipeline.json
               ],
               "configuration": {
                   "Extract": "true", 
-                  "BucketName": "jrdalino-calculator-frontend"
+                  "BucketName": "jrdalino-myproject-consumer-web"
               }
             }
           ]
@@ -126,26 +126,26 @@ $ vi ~/environment/calculator-frontend/aws-cli/code-pipeline.json
       ],
       "artifactStore": {
         "type": "S3",
-        "location": "jrdalino-calculator-frontend-artifacts"
+        "location": "jrdalino-myproject-consumer-web-artifacts"
       }
   }
 }
 ```
 
-### Step 7.6: Create a pipeline in CodePipeline
+### Step 1.6: Create a pipeline in CodePipeline
 ```
 $ aws codepipeline create-pipeline \
---cli-input-json file://~/environment/calculator-frontend/aws-cli/code-pipeline.json
+--cli-input-json file://~/environment/myproject-consumer-web/aws-cli/code-pipeline.json
 ```
 
-### Step 7.7: Make a small code change, Push and Validate changes
+### Step 1.7: Make a small code change, Push and Validate changes
 
 ### (Optional) Clean up
 ```
 $ aws codepipeline delete-pipeline --name CalculatorFrontendServiceCICDPipeline
-$ rm ~/environment/calculator-frontend/aws-cli/code-pipeline.json
-$ aws s3api delete-bucket-policy --bucket jrdalino-calculator-frontend-artifacts
-$ rm ~/environment/calculator-frontend/aws-cli/artifacts-bucket-policy.json
-$ aws s3 rm s3://jrdalino-calculator-frontend-artifacts --recursive
-$ aws s3 rb s3://jrdalino-calculator-frontend-artifacts --force
+$ rm ~/environment/myproject-consumer-web/aws-cli/code-pipeline.json
+$ aws s3api delete-bucket-policy --bucket jrdalino-myproject-consumer-web-artifacts
+$ rm ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
+$ aws s3 rm s3://jrdalino-myproject-consumer-web-artifacts --recursive
+$ aws s3 rb s3://jrdalino-myproject-consumer-web-artifacts --force
 ```
