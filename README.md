@@ -10,18 +10,18 @@ $ aws s3 mb s3://jrdalino-myproject-consumer-web-artifacts
 ### Step 1.2: Create Codepipeline Role using CloudFormation
 ```
 $ cd ~/environment/myproject-consumer-web
-$ mkdir aws-cli
+$ mkdir aws-cfn
 $ vi ~/environment/myproject-consumer-web/aws-cfn/myproject-consumer-web-codepipeline-service-role-stack.yml
 ```
 ```
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: This stack deploys the IAM Role for CodePipeline
+Description: This stack deploys the IAM Role for Codepipeline
 Resources:
-  MyProjectConsumerWebCodePipelineServiceRole:
+  MyprojectConsumerWebCodepipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: MyProjectConsumerWebCodePipelineServiceRole
+      RoleName: MyprojectConsumerWebCodepipelineServiceRole
       AssumeRolePolicyDocument:
         Statement:
         - Effect: Allow
@@ -32,7 +32,7 @@ Resources:
           - sts:AssumeRole
       Path: "/"
       Policies:
-      - PolicyName: MyProjectConsumerWebCodePipelineServicePolicy
+      - PolicyName: MyprojectConsumerWebCodepipelineServicePolicy
         PolicyDocument:
           Statement:
           - Action:
@@ -67,15 +67,15 @@ Resources:
 Outputs:
   CodePipelineRole:
     Description: REPLACE_ME_CODEPIPELINE_ROLE_ARN
-    Value: !GetAtt 'MyProjectConsumerWebCodePipelineServiceRole.Arn'
+    Value: !GetAtt 'MyprojectConsumerWebCodepipelineServiceRole.Arn'
     Export:
-      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'MyProjectConsumerWebCodePipelineServiceRole' ] ]
+      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'MyprojectConsumerWebCodepipelineServiceRole' ] ]
 ```
 
 ## Step 1.3: Create the Stack
 ```
 $ aws cloudformation create-stack \
---stack-name MyProjectConsumerWebCodePipelineServiceRoleStack \
+--stack-name MyprojectConsumerWebCodepipelineServiceRoleStack \
 --capabilities CAPABILITY_NAMED_IAM \
 --template-body file://~/environment/myproject-consumer-web/aws-cfn/myproject-consumer-web-codepipeline-service-role-stack.yml
 ```
@@ -95,7 +95,7 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
         "Effect": "Allow",
         "Principal": {
           "AWS": [
-            "arn:aws:iam::707538076348:role/myproject-consumer-web-codepipeline-role"
+            "arn:aws:iam::707538076348:role/MyprojectConsumerWebCodepipelineServiceRole"
           ]
         },
         "Action": [
@@ -113,7 +113,7 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
         "Effect": "Allow",
         "Principal": {
           "AWS": [
-            "arn:aws:iam::707538076348:role/myproject-consumer-web-codepipeline-role"
+            "arn:aws:iam::707538076348:role/MyprojectConsumerWebCodepipelineServiceRole"
           ]
         },
         "Action": "s3:PutObject",
@@ -141,8 +141,8 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
 ```
 {
   "pipeline": {
-      "name": "myproject-consumer-web-codepipeline",
-      "roleArn": "arn:aws:iam::707538076348:role/myproject-consumer-web-codepipeline-role",
+      "name": "MyprojectConsumerWebCodepipeline",
+      "roleArn": "arn:aws:iam::707538076348:role/MyprojectConsumerWebCodepipelineServiceRole",
       "stages": [
         {
           "name": "Source",
@@ -203,7 +203,7 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
 }
 ```
 
-### Step 1.7: Create a pipeline in CodePipeline
+### Step 1.7: Create the pipeline
 ```
 $ aws codepipeline create-pipeline \
 --cli-input-json file://~/environment/myproject-consumer-web/aws-cli/codepipeline.json
@@ -213,7 +213,7 @@ $ aws codepipeline create-pipeline \
 
 ### (Optional) Clean up
 ```
-$ aws codepipeline delete-pipeline --name myproject-consumer-web-codepipeline
+$ aws codepipeline delete-pipeline --name MyprojectConsumerWebCodepipeline
 $ rm ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
 $ aws s3api delete-bucket-policy --bucket jrdalino-myproject-consumer-web-artifacts
 $ rm ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
