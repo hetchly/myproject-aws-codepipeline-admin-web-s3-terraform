@@ -9,9 +9,14 @@ $ aws s3 mb s3://jrdalino-myproject-consumer-web-artifacts
 
 ### Step 1.2: Create Codepipeline Role using CloudFormation
 ```
+$ cd ~/environment/myproject-consumer-web
+$ mkdir aws-cli
+$ vi ~/environment/myproject-consumer-web/aws-cfn/myproject-consumer-web-codepipeline-service-role-stack.yml
+```
+```
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: This stack deploys the IAM Role
+Description: This stack deploys the IAM Role for CodePipeline
 Resources:
   MyProjectConsumerWebCodePipelineServiceRole:
     Type: AWS::IAM::Role
