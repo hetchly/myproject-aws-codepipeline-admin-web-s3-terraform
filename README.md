@@ -135,7 +135,7 @@ $ aws s3api put-bucket-policy \
 
 ### Step 1.6: Create CodePipeline Input File
 ```
-$ vi ~/environment/myproject-consumer-web/aws-cli/code-pipeline.json
+$ vi ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
 ```
 
 ```
@@ -206,7 +206,7 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/code-pipeline.json
 ### Step 1.7: Create a pipeline in CodePipeline
 ```
 $ aws codepipeline create-pipeline \
---cli-input-json file://~/environment/myproject-consumer-web/aws-cli/code-pipeline.json
+--cli-input-json file://~/environment/myproject-consumer-web/aws-cli/codepipeline.json
 ```
 
 ### Step 1.8: Make a small code change, Push and Validate changes
