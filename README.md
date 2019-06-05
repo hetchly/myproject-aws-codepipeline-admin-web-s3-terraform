@@ -214,7 +214,7 @@ $ aws codepipeline create-pipeline \
 ### (Optional) Clean up
 ```
 $ aws codepipeline delete-pipeline --name myproject-consumer-web-codepipeline
-$ rm ~/environment/myproject-consumer-web/aws-cli/code-pipeline.json
+$ rm ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
 $ aws s3api delete-bucket-policy --bucket jrdalino-myproject-consumer-web-artifacts
 $ rm ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
 $ aws s3 rm s3://jrdalino-myproject-consumer-web-artifacts --recursive
