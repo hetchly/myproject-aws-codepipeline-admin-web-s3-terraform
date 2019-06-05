@@ -1,4 +1,4 @@
-# My Project Consumer Web CodePipeline
+# My Project Consumer Web Codepipeline
 
 ## Step 1: Setup CI/CD for Front End
 
