@@ -1,27 +1,27 @@
-# My Project Consumer Web Codepipeline
+# My Project Admin Web Codepipeline
 
 ## Step 1: Setup CI/CD for Front End
 
 ### Step 1.1: Create an S3 Bucket for Pipeline Artifacts
 ```
-$ aws s3 mb s3://jrdalino-myproject-consumer-web-artifacts
+$ aws s3 mb s3://jrdalino-myproject-admin-web-artifacts
 ```
 
 ### Step 1.2: Create Codepipeline Role using CloudFormation
 ```
-$ cd ~/environment/myproject-consumer-web
+$ cd ~/environment/myproject-admin-web
 $ mkdir aws-cfn
-$ vi ~/environment/myproject-consumer-web/aws-cfn/myproject-consumer-web-codepipeline-service-role-stack.yml
+$ vi ~/environment/myproject-admin-web/aws-cfn/myproject-admin-web-codepipeline-service-role-stack.yml
 ```
 ```
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Description: This stack deploys the IAM Role for Codepipeline
 Resources:
-  MyprojectConsumerWebCodepipelineServiceRole:
+  MyprojectAdminWebCodepipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: MyprojectConsumerWebCodepipelineServiceRole
+      RoleName: MyprojectAdminWebCodepipelineServiceRole
       AssumeRolePolicyDocument:
         Statement:
         - Effect: Allow
@@ -32,7 +32,7 @@ Resources:
           - sts:AssumeRole
       Path: "/"
       Policies:
-      - PolicyName: MyprojectConsumerWebCodepipelineServicePolicy
+      - PolicyName: MyprojectAdminWebCodepipelineServicePolicy
         PolicyDocument:
           Statement:
           - Action:
@@ -67,24 +67,24 @@ Resources:
 Outputs:
   CodePipelineRole:
     Description: REPLACE_ME_CODEPIPELINE_ROLE_ARN
-    Value: !GetAtt 'MyprojectConsumerWebCodepipelineServiceRole.Arn'
+    Value: !GetAtt 'MyprojectAdminWebCodepipelineServiceRole.Arn'
     Export:
-      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'MyprojectConsumerWebCodepipelineServiceRole' ] ]
+      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'MyprojectAdminWebCodepipelineServiceRole' ] ]
 ```
 
 ## Step 1.3: Create the Stack
 ```
 $ aws cloudformation create-stack \
---stack-name MyprojectConsumerWebCodepipelineServiceRoleStack \
+--stack-name MyprojectAdminWebCodepipelineServiceRoleStack \
 --capabilities CAPABILITY_NAMED_IAM \
---template-body file://~/environment/myproject-consumer-web/aws-cfn/myproject-consumer-web-codepipeline-service-role-stack.yml
+--template-body file://~/environment/myproject-admin-web/aws-cfn/myproject-admin-web-codepipeline-service-role-stack.yml
 ```
 
 ### Step 1.4: Create S3 Bucket Policy File
 ```
-$ cd ~/environment/myproject-consumer-web
+$ cd ~/environment/myproject-admin-web
 $ mkdir aws-cli
-$ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
+$ vi ~/environment/myproject-admin-web/aws-cli/artifacts-bucket-policy.json
 ```
 
 ```
@@ -95,7 +95,7 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
         "Effect": "Allow",
         "Principal": {
           "AWS": [
-            "arn:aws:iam::707538076348:role/MyprojectConsumerWebCodepipelineServiceRole"
+            "arn:aws:iam::707538076348:role/MyprojectAdminWebCodepipelineServiceRole"
           ]
         },
         "Action": [
@@ -104,8 +104,8 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
           "s3:GetBucketVersioning"
         ],
         "Resource": [
-          "arn:aws:s3:::jrdalino-myproject-consumer-web-artifacts/*",
-          "arn:aws:s3:::jrdalino-myproject-consumer-web-artifacts"
+          "arn:aws:s3:::jrdalino-myproject-admin-web-artifacts/*",
+          "arn:aws:s3:::jrdalino-myproject-admin-web-artifacts"
         ]
       },
       {
@@ -113,13 +113,13 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
         "Effect": "Allow",
         "Principal": {
           "AWS": [
-            "arn:aws:iam::707538076348:role/MyprojectConsumerWebCodepipelineServiceRole"
+            "arn:aws:iam::707538076348:role/MyprojectAdminWebCodepipelineServiceRole"
           ]
         },
         "Action": "s3:PutObject",
         "Resource": [
-          "arn:aws:s3:::jrdalino-myproject-consumer-web-artifacts/*",
-          "arn:aws:s3:::jrdalino-myproject-consumer-web-artifacts"
+          "arn:aws:s3:::jrdalino-myproject-admin-web-artifacts/*",
+          "arn:aws:s3:::jrdalino-myproject-admin-web-artifacts"
         ]
       }
     ]
@@ -129,20 +129,20 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
 ### Step 1.5: Grant S3 Bucket access to your CI/CD Pipeline
 ```
 $ aws s3api put-bucket-policy \
---bucket jrdalino-myproject-consumer-web-artifacts \
---policy file://~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
+--bucket jrdalino-myproject-admin-web-artifacts \
+--policy file://~/environment/myproject-admin-web/aws-cli/artifacts-bucket-policy.json
 ```
 
 ### Step 1.6: Create CodePipeline Input File
 ```
-$ vi ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
+$ vi ~/environment/myproject-admin-web/aws-cli/codepipeline.json
 ```
 
 ```
 {
   "pipeline": {
-      "name": "MyprojectConsumerWebCodepipeline",
-      "roleArn": "arn:aws:iam::707538076348:role/MyprojectConsumerWebCodepipelineServiceRole",
+      "name": "MyprojectAdminWebCodepipeline",
+      "roleArn": "arn:aws:iam::707538076348:role/MyprojectAdminWebCodepipelineServiceRole",
       "stages": [
         {
           "name": "Source",
@@ -160,12 +160,12 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
               },
               "outputArtifacts": [
                 {
-                  "name": "myproject-consumer-web-source-artifact"
+                  "name": "myproject-admin-web-source-artifact"
                 }
               ],
               "configuration": {
                 "BranchName": "master",
-                "RepositoryName": "myproject-consumer-web"
+                "RepositoryName": "myproject-admin-web"
               },
               "runOrder": 1
             }
@@ -184,12 +184,12 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
               },
               "inputArtifacts": [
                 {
-                  "name": "myproject-consumer-web-source-artifact"
+                  "name": "myproject-admin-web-source-artifact"
                 }
               ],
               "configuration": {
                   "Extract": "true", 
-                  "BucketName": "jrdalino-myproject-consumer-web"
+                  "BucketName": "jrdalino-myproject-admin-web"
               }
             }
           ]
@@ -197,7 +197,7 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
       ],
       "artifactStore": {
         "type": "S3",
-        "location": "jrdalino-myproject-consumer-web-artifacts"
+        "location": "jrdalino-myproject-admin-web-artifacts"
       }
   }
 }
@@ -206,17 +206,17 @@ $ vi ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
 ### Step 1.7: Create the pipeline
 ```
 $ aws codepipeline create-pipeline \
---cli-input-json file://~/environment/myproject-consumer-web/aws-cli/codepipeline.json
+--cli-input-json file://~/environment/myproject-admin-web/aws-cli/codepipeline.json
 ```
 
 ### Step 1.8: Make a small code change, Push and Validate changes
 
 ### (Optional) Clean up
 ```
-$ aws codepipeline delete-pipeline --name MyprojectConsumerWebCodepipeline
-$ rm ~/environment/myproject-consumer-web/aws-cli/codepipeline.json
-$ aws s3api delete-bucket-policy --bucket jrdalino-myproject-consumer-web-artifacts
-$ rm ~/environment/myproject-consumer-web/aws-cli/artifacts-bucket-policy.json
-$ aws s3 rm s3://jrdalino-myproject-consumer-web-artifacts --recursive
-$ aws s3 rb s3://jrdalino-myproject-consumer-web-artifacts --force
+$ aws codepipeline delete-pipeline --name MyprojectAdminWebCodepipeline
+$ rm ~/environment/myproject-admin-web/aws-cli/codepipeline.json
+$ aws s3api delete-bucket-policy --bucket jrdalino-myproject-admin-web-artifacts
+$ rm ~/environment/myproject-admin-web/aws-cli/artifacts-bucket-policy.json
+$ aws s3 rm s3://jrdalino-myproject-admin-web-artifacts --recursive
+$ aws s3 rb s3://jrdalino-myproject-admin-web-artifacts --force
 ```
