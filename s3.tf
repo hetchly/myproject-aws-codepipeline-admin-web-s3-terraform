@@ -1,12 +1,12 @@
 # S3 Bucket for Artifacts
 resource "aws_s3_bucket" "build_artifact_bucket" {
-  bucket        = "${var.s3_bucket_artifacts_name}"
+  bucket        = var.s3_bucket_artifacts_name
   acl           = "private"
   force_destroy = "true"
 }
 
 resource "aws_s3_bucket_policy" "build_artifact_bucket" {
-  bucket = "${aws_s3_bucket.build_artifact_bucket.id}"
+  bucket = aws_s3_bucket.build_artifact_bucket.id
 
   policy = <<POLICY
 {

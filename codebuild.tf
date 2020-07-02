@@ -1,6 +1,6 @@
 # CodeBuild Role
 resource "aws_iam_role" "codebuild_service_role" {
-  name = "${var.codebuild_service_role_name}"
+  name = var.codebuild_service_role_name
 
   assume_role_policy = <<EOF
 {
@@ -19,8 +19,8 @@ EOF
 }
 
 resource "aws_iam_role_policy" "codebuild_service_role_policy" {
-  name = "${var.codebuild_service_role_policy_name}"
-  role = "${aws_iam_role.codebuild_service_role.name}"
+  name = var.codebuild_service_role_policy_name
+  role = aws_iam_role.codebuild_service_role.name
 
   policy = <<EOF
 {
@@ -64,7 +64,7 @@ EOF
 
 # CodeBuild Project
 resource "aws_codebuild_project" "build_project" {
-  name        = "${var.codebuild_project_name}"
+  name        = var.codebuild_project_name
   description = "The CodeBuild project for ${var.github_repo_name}"
 
   # Source
@@ -82,17 +82,17 @@ resource "aws_codebuild_project" "build_project" {
 
     environment_variable {
       name  = "AWS_ACCOUNT_ID"
-      value = "${var.aws_account}"
+      value = var.aws_account
     }
 
     environment_variable {
       name  = "AWS_DEFAULT_REGION"
-      value = "${var.aws_region}"
+      value = var.aws_region
     }
           
   }
-  service_role  = "${aws_iam_role.codebuild_service_role.arn}"
-  build_timeout = "60" # Adjust this if needed
+  service_role  = aws_iam_role.codebuild_service_role.arn
+  build_timeout = "5" # Adjust this if needed
   
   # Artifacts
   artifacts {

@@ -1,6 +1,6 @@
 # CodePipeline Role
 resource "aws_iam_role" "codepipeline_service_role" {
-  name = "${var.codepipeline_service_role_name}"
+  name = var.codepipeline_service_role_name
 
   assume_role_policy = <<EOF
 {
@@ -19,8 +19,8 @@ EOF
 }
 
 resource "aws_iam_role_policy" "codepipeline_service_role_policy" {
-  name = "${var.codepipeline_service_role_policy_name}"
-  role = "${aws_iam_role.codepipeline_service_role.name}"
+  name = var.codepipeline_service_role_policy_name
+  role = aws_iam_role.codepipeline_service_role.name
 
   policy = <<EOF
 {
@@ -80,11 +80,11 @@ EOF
 
 # CodePipeline Pipeline
 resource "aws_codepipeline" "codepipeline" {
-  name     = "${var.codepipeline_pipeline_name}"
-  role_arn = "${aws_iam_role.codepipeline_service_role.arn}"
+  name     = var.codepipeline_pipeline_name
+  role_arn = aws_iam_role.codepipeline_service_role.arn
 
   artifact_store {
-    location = "${aws_s3_bucket.build_artifact_bucket.bucket}"
+    location = aws_s3_bucket.build_artifact_bucket.bucket
     type     = "S3"
   }
 
@@ -101,9 +101,9 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration = {
         Owner          = "hetchly"
-        Repo           = "${var.github_repo_name}"
+        Repo           = var.github_repo_name
         Branch         = "master"
-        OAuthToken     = "${var.github_oauth_token}"
+        OAuthToken     = var.github_oauth_token
       }
     }
   }
@@ -121,7 +121,7 @@ resource "aws_codepipeline" "codepipeline" {
       version          = "1"
 
       configuration = {
-        ProjectName = "${aws_codebuild_project.build_project.name}"
+        ProjectName = aws_codebuild_project.build_project.name
       }
     }
   }
